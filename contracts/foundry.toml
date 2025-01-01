@@ -6,3 +6,6 @@ ffi = true
 ast = true
 build_info = true
 extra_output = ["storageLayout"]
+
+[rpc_endpoints]
+a8_testnet = "${A8_TESTNET_RPC_URL}"
