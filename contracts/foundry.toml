@@ -1,2 +1,8 @@
 [profile.ci.fuzz]
 runs = 10_000
+
+[profile.default]
+ffi = true
+ast = true
+build_info = true
+extra_output = ["storageLayout"]
