@@ -3,21 +3,35 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 
-import "src/Contract.sol";
+import { Counter } from "../src/Counter.sol";
 
-contract TestContract is Test {
-    Contract c;
+contract TestCounter is Test {
+    Counter c;
 
     function setUp() public {
-        c = new Contract();
+        c = new Counter();
     }
 
-    function testBar() public {
-        assertEq(uint256(1), uint256(1), "ok");
+    function testIncrement() public {
+        c.increment();
+        assertEq(c.getCount(), 1, "Counter should be incremented to 1");
     }
 
-    function testFoo(uint256 x) public {
-        vm.assume(x < type(uint128).max);
-        assertEq(x + x, x * 2);
+    function testDecrement() public {
+        c.increment();
+        c.decrement();
+        assertEq(c.getCount(), 0, "Counter should be decremented to 0");
+    }
+
+    function testDecrementUnderflow() public {
+        try c.decrement() {
+            fail();
+        } catch Error(string memory reason) {
+            assertEq(reason, "Counter: decrement overflow");
+        }
+    }
+
+    function testGetCount() public {
+        assertEq(c.getCount(), 0, "Initial counter value should be 0");
     }
 }
