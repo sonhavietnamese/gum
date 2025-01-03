@@ -15,8 +15,8 @@ export const generateGradient = (seed: string) => {
 }
 
 export const generateAvatar = (seed: string, className?: string): React.ReactNode => {
-  const color1 = generateGradient(seed + '1')
-  const color2 = generateGradient(seed + '2')
+  const color1 = generateGradient(seed + seed)
+  const color2 = generateGradient(seed + seed + seed)
 
   return (
     <svg className={cn('w-full h-full', className)} xmlns='http://www.w3.org/2000/svg' version='1.1' viewBox='0 0 700 700' width='700' height='700'>

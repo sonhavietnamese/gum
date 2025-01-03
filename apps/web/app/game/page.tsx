@@ -13,8 +13,6 @@ export default function Page(): JSX.Element {
     client: thirdwebClient,
   })
 
-  console.log(profiles)
-
   const getAddress = async () => {
     const add = wallets?.getAccount()
     console.log(add)

@@ -22,8 +22,6 @@ export const generatePayload = thirdwebAuth.generatePayload
 export async function login(payload: VerifyLoginPayloadParams) {
   const verifiedPayload = await thirdwebAuth.verifyPayload(payload)
 
-  console.log(payload)
-  console.log(verifiedPayload)
   const ck = await cookies()
 
   if (verifiedPayload.valid) {
@@ -49,20 +47,6 @@ export async function isLoggedIn() {
     return false
   }
   return true
-}
-
-export async function authedOnly() {
-  const ck = await cookies()
-  const jwt = ck.get('jwt')
-  if (!jwt?.value) {
-    redirect('/')
-  }
-
-  const authResult = await thirdwebAuth.verifyJWT({ jwt: jwt.value })
-  if (!authResult.valid) {
-    redirect('/')
-  }
-  return authResult.parsedJWT
 }
 
 export async function logout() {

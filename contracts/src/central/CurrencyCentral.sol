@@ -22,6 +22,7 @@ contract CurrencyCentral is Initializable {
     event CurrencyCreated(address indexed currencyAddress, string name, string symbol, address owner);
 
     mapping(address => address[]) private _userCurrencies;
+    mapping(string => address[]) private _gameCurrencies;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -48,19 +49,18 @@ contract CurrencyCentral is Initializable {
         string memory symbol,
         address defaultAdmin,
         address pauser,
-        address minter
+        address minter,
+        string memory gameSlug
     ) external returns (address) {
-        // Prepare initialization data
         bytes memory initData = abi.encodeWithSelector(
             Currency(_implementation).initialize.selector, defaultAdmin, pauser, minter, name, symbol
         );
 
-        // // Deploy proxy
         TransparentUpgradeableProxy proxy =
             new TransparentUpgradeableProxy(_implementation, address(_proxyAdmin), initData);
 
-        // Store token address for the user
         _userCurrencies[defaultAdmin].push(address(proxy));
+        _gameCurrencies[gameSlug].push(address(proxy));
 
         emit CurrencyCreated(address(proxy), name, symbol, defaultAdmin);
 
@@ -69,5 +69,37 @@ contract CurrencyCentral is Initializable {
 
     function getUserCurrencies(address user) external view returns (address[] memory) {
         return _userCurrencies[user];
+    }
+
+    function getGameCurrencies(string memory gameSlug) external view returns (address[] memory) {
+        return _gameCurrencies[gameSlug];
+    }
+
+    function getWalletGameCurrencies(address wallet, string memory gameSlug) external view returns (address[] memory) {
+        address[] memory userTokens = _userCurrencies[wallet];
+        address[] memory gameTokens = _gameCurrencies[gameSlug];
+
+        uint256 matchCount = 0;
+        for (uint256 i = 0; i < userTokens.length; i++) {
+            for (uint256 j = 0; j < gameTokens.length; j++) {
+                if (userTokens[i] == gameTokens[j]) {
+                    matchCount++;
+                }
+            }
+        }
+
+        address[] memory result = new address[](matchCount);
+        uint256 resultIndex = 0;
+
+        for (uint256 i = 0; i < userTokens.length; i++) {
+            for (uint256 j = 0; j < gameTokens.length; j++) {
+                if (userTokens[i] == gameTokens[j]) {
+                    result[resultIndex] = userTokens[i];
+                    resultIndex++;
+                }
+            }
+        }
+
+        return result;
     }
 }

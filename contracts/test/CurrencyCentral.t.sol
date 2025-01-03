@@ -16,8 +16,9 @@ contract CurrencyCentralTest is Test {
     event CurrencyCreated(address indexed currencyAddress, string name, string symbol, address owner);
 
     function setUp() public {
-        address proxy =
-            Upgrades.deployTransparentProxy("CurrencyCentral.sol", msg.sender, abi.encodeCall(CurrencyCentral.initialize, (admin)));
+        address proxy = Upgrades.deployTransparentProxy(
+            "CurrencyCentral.sol", msg.sender, abi.encodeCall(CurrencyCentral.initialize, (admin))
+        );
 
         central = CurrencyCentral(proxy);
     }

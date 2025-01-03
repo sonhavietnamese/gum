@@ -1,12 +1,12 @@
 import { ThemeProvider } from '@/providers/theme-provider'
 import { ThirdwebProvider } from '@/providers/thirdweb-provider'
 import { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Geist_Mono, Inter } from 'next/font/google'
 
 import '@repo/ui/globals.css'
 import './globals.css'
 
-const fontSans = Geist({
+const fontSans = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
 })
