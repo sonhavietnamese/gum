@@ -12,12 +12,15 @@
   },
   "dependencies": {
     "@repo/ui": "workspace:*",
+    "@thirdweb-dev/react": "^4.9.4",
+    "@thirdweb-dev/sdk": "^4.0.99",
     "lucide-react": "^0.469.0",
     "next": "^15.0.0",
     "next-themes": "^0.4.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "thirdweb": "^5.80.0"
+    "thirdweb": "^5.80.0",
+    "viem": "^2.22.2"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

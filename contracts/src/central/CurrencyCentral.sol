@@ -12,7 +12,6 @@ import {ERC20PermitUpgradeable} from
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {TransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import {ProxyAdmin} from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
-
 import {Currency} from "../currency/Currency.sol";
 
 // Factory contract
@@ -56,14 +55,14 @@ contract CurrencyCentral is Initializable {
             Currency(_implementation).initialize.selector, defaultAdmin, pauser, minter, name, symbol
         );
 
-        // Deploy proxy
+        // // Deploy proxy
         TransparentUpgradeableProxy proxy =
             new TransparentUpgradeableProxy(_implementation, address(_proxyAdmin), initData);
 
         // Store token address for the user
-        _userCurrencies[msg.sender].push(address(proxy));
+        _userCurrencies[defaultAdmin].push(address(proxy));
 
-        emit CurrencyCreated(address(proxy), name, symbol, msg.sender);
+        emit CurrencyCreated(address(proxy), name, symbol, defaultAdmin);
 
         return address(proxy);
     }

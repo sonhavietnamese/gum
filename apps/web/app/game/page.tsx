@@ -1,5 +1,6 @@
 'use client'
 
+import { LoginButton } from '@/components/login-button'
 import { LogOutButton } from '@/components/logout-button'
 import { thirdwebClient } from '@/lib/thirdweb-client'
 import Link from 'next/link'
@@ -25,7 +26,7 @@ export default function Page(): JSX.Element {
 
       <button onClick={getAddress}>Get Address</button>
 
-      <Link href='/games/asdsad/design/live'>Game 123</Link>
+      <Link href='/game/asdsad/system/currency'>Game 123</Link>
 
       <ConnectButton
         chains={[defineChain(28122024)]}
@@ -33,7 +34,12 @@ export default function Page(): JSX.Element {
           label: 'Sign in to MyApp',
         }}
         client={thirdwebClient}
+        accountAbstraction={{
+          chain: defineChain(28122024), // the chain where your smart accounts will be or is deployed
+          sponsorGas: true, // enable or disable sponsored transactions
+        }}
       />
+      <LoginButton />
       <LogOutButton />
     </div>
   )

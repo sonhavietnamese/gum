@@ -30,6 +30,9 @@ export function NavUser(): JSX.Element {
   const { data: profiles } = useProfiles({ client: thirdwebClient })
   const account = useActiveAccount()
 
+  console.log(account)
+  console.log(profiles)
+
   const address = useMemo(() => {
     return formatAddress(account?.address ?? '')
   }, [account?.address])

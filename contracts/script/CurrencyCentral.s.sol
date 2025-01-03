@@ -12,13 +12,25 @@ contract CurrencyCentralScript is Script {
 
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address admin = vm.addr(deployerPrivateKey);
         vm.startBroadcast(deployerPrivateKey);
 
-        address proxy = Upgrades.deployTransparentProxy(
-            "CurrencyCentral.sol", msg.sender, abi.encodeCall(CurrencyCentral.initialize, (msg.sender))
+        // Deploy the CurrencyCentral implementation contract
+        CurrencyCentral currencyCentral = new CurrencyCentral();
+
+        // Deploy the ProxyAdmin contract
+        ProxyAdmin proxyAdmin = new ProxyAdmin(admin);
+
+        // Deploy the TransparentUpgradeableProxy with the implementation and ProxyAdmin
+        TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(
+            address(currencyCentral),
+            address(proxyAdmin),
+            abi.encodeWithSelector(CurrencyCentral.initialize.selector, admin)
         );
 
-        CurrencyCentral central = CurrencyCentral(proxy);
+        console2.log("Proxy address:", address(proxy));
+        console2.log("Implementation address:", address(currencyCentral));
+        console2.log("ProxyAdmin address:", address(proxyAdmin));
 
         vm.stopBroadcast();
     }

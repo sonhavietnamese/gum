@@ -1,0 +1,58 @@
+export const ABI = [
+  { type: 'constructor', inputs: [], stateMutability: 'nonpayable' },
+  {
+    type: 'function',
+    name: 'createCurrency',
+    inputs: [
+      { name: 'name', type: 'string', internalType: 'string' },
+      { name: 'symbol', type: 'string', internalType: 'string' },
+      { name: 'defaultAdmin', type: 'address', internalType: 'address' },
+      { name: 'pauser', type: 'address', internalType: 'address' },
+      { name: 'minter', type: 'address', internalType: 'address' },
+    ],
+    outputs: [{ name: '', type: 'address', internalType: 'address' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'getUserCurrencies',
+    inputs: [{ name: 'user', type: 'address', internalType: 'address' }],
+    outputs: [{ name: '', type: 'address[]', internalType: 'address[]' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'implementation',
+    inputs: [],
+    outputs: [{ name: '', type: 'address', internalType: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'initialize',
+    inputs: [{ name: 'owner', type: 'address', internalType: 'address' }],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'proxyAdmin',
+    inputs: [],
+    outputs: [{ name: '', type: 'address', internalType: 'contract ProxyAdmin' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'event',
+    name: 'CurrencyCreated',
+    inputs: [
+      { name: 'currencyAddress', type: 'address', indexed: true, internalType: 'address' },
+      { name: 'name', type: 'string', indexed: false, internalType: 'string' },
+      { name: 'symbol', type: 'string', indexed: false, internalType: 'string' },
+      { name: 'owner', type: 'address', indexed: false, internalType: 'address' },
+    ],
+    anonymous: false,
+  },
+  { type: 'event', name: 'Initialized', inputs: [{ name: 'version', type: 'uint64', indexed: false, internalType: 'uint64' }], anonymous: false },
+  { type: 'error', name: 'InvalidInitialization', inputs: [] },
+  { type: 'error', name: 'NotInitializing', inputs: [] },
+]

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-import {Test} from "forge-std/Test.sol";
+import {Test, console2} from "forge-std/Test.sol";
 import {CurrencyCentral} from "../src/central/CurrencyCentral.sol";
 import {Currency} from "../src/currency/Currency.sol";
 
@@ -49,6 +49,8 @@ contract CurrencyCentralTest is Test {
         Currency token = Currency(tokenAddress);
 
         emit log_address(tokenAddress);
+        console2.log(token.name());
+        console2.log(token.symbol());
 
         assertEq(token.name(), name, "Token name should match");
         assertEq(token.symbol(), symbol, "Token symbol should match");
