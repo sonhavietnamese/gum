@@ -1,8 +1,9 @@
-import { ThemeProvider } from '@/components/theme-provider'
-import '@repo/ui/globals.css'
+import { ThemeProvider } from '@/app/providers/theme-provider'
 import { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { ReactNode } from 'react'
+import { ChainProvider, ThirdwebProvider } from './providers/thirdweb-provider'
+
+import '@repo/ui/globals.css'
 import './globals.css'
 
 const fontSans = Geist({
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
 }
 
 type RootLayoutProps = Readonly<{
-  children: ReactNode
+  children: React.ReactNode
 }>
 
 export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
@@ -31,7 +32,9 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
     <html lang='en' suppressHydrationWarning>
       <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}>
         <ThemeProvider attribute='class' defaultTheme='dark' enableSystem disableTransitionOnChange>
-          {children}
+          <ThirdwebProvider>
+            <ChainProvider>{children}</ChainProvider>
+          </ThirdwebProvider>
         </ThemeProvider>
       </body>
     </html>

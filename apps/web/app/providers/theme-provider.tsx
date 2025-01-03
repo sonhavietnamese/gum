@@ -7,6 +7,6 @@ type ThemeProviderProps = ComponentProps<typeof NextThemesProvider> & {
   children: React.ReactNode
 }
 
-export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+export function ThemeProvider({ children, ...props }: ThemeProviderProps): JSX.Element {
   return <NextThemesProvider {...props}>{children}</NextThemesProvider>
 }
