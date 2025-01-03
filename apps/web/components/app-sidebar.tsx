@@ -1,11 +1,14 @@
 'use client'
 
-import { NavUser } from '@/components/nav-user'
+import { thirdwebClient } from '@/lib/thirdweb-client'
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@repo/ui/components/sidebar'
 import { AudioWaveform, BookOpen, Bot, FileClock, Frame, GalleryVerticalEnd, History, Puzzle, Radio, Settings2, SquareTerminal } from 'lucide-react'
 import * as React from 'react'
+import { defineChain } from 'thirdweb'
+import { ConnectButton } from 'thirdweb/react'
 import { NavDesign } from './nav-design'
 import { NavSystems } from './nav-systems'
+import { NavUser } from './nav-user'
 import { ProjectSwitcher } from './project-switcher'
 
 const data = {
@@ -155,6 +158,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSystems systems={data.systems} />
       </SidebarContent>
       <SidebarFooter>
+        <ConnectButton chains={[defineChain(28122024)]} client={thirdwebClient} />
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>

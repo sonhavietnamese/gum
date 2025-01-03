@@ -1,7 +1,7 @@
-import { ThemeProvider } from '@/app/providers/theme-provider'
+import { ThemeProvider } from '@/providers/theme-provider'
+import { ThirdwebProvider } from '@/providers/thirdweb-provider'
 import { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { ChainProvider, ThirdwebProvider } from './providers/thirdweb-provider'
 
 import '@repo/ui/globals.css'
 import './globals.css'
@@ -32,9 +32,7 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
     <html lang='en' suppressHydrationWarning>
       <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}>
         <ThemeProvider attribute='class' defaultTheme='dark' enableSystem disableTransitionOnChange>
-          <ThirdwebProvider>
-            <ChainProvider>{children}</ChainProvider>
-          </ThirdwebProvider>
+          <ThirdwebProvider>{children}</ThirdwebProvider>
         </ThemeProvider>
       </body>
     </html>

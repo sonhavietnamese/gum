@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Dashboard',
 }
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }): JSX.Element {
   return (
     <SidebarProvider>
       <AppSidebar />
