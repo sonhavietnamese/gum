@@ -2,7 +2,8 @@
 
 import { logout } from '@/app/actions/auth'
 import { thirdwebClient } from '@/lib/thirdweb-client'
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/components/avatar'
+import { generateGradient } from '@/lib/utils'
+import { Avatar } from '@repo/ui/components/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,15 +24,7 @@ const formatAddress = (address: string, length: number = 6) => {
   return `${address.slice(0, length)}...${address.slice(-length)}`.toLowerCase()
 }
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string
-    email: string
-    avatar: string
-  }
-}): JSX.Element {
+export function NavUser(): JSX.Element {
   const { isMobile } = useSidebar()
 
   const { data: profiles } = useProfiles({ client: thirdwebClient })
@@ -52,8 +45,48 @@ export function NavUser({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton size='lg' className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'>
               <Avatar className='h-8 w-8 rounded-lg'>
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className='rounded-lg'>GU</AvatarFallback>
+                <svg className='w-8 h-8' xmlns='http://www.w3.org/2000/svg' version='1.1' viewBox='0 0 700 700' width='700' height='700'>
+                  <defs>
+                    <linearGradient gradientTransform='rotate(150, 0.5, 0.5)' x1='50%' y1='0%' x2='50%' y2='100%' id='ffflux-gradient'>
+                      <stop stopColor={generateGradient(address)} stopOpacity='1' offset='0%' />
+                      <stop stopColor={generateGradient(email)} stopOpacity='1' offset='100%' />
+                    </linearGradient>
+                    <filter
+                      id='ffflux-filter'
+                      x='-20%'
+                      y='-20%'
+                      width='140%'
+                      height='140%'
+                      filterUnits='objectBoundingBox'
+                      primitiveUnits='userSpaceOnUse'
+                      colorInterpolationFilters='sRGB'>
+                      <feTurbulence
+                        type='fractalNoise'
+                        baseFrequency='0.005 0.003'
+                        numOctaves='2'
+                        seed='221'
+                        stitchTiles='stitch'
+                        x='0%'
+                        y='0%'
+                        width='100%'
+                        height='100%'
+                        result='turbulence'
+                      />
+                      <feGaussianBlur
+                        stdDeviation='20 0'
+                        x='0%'
+                        y='0%'
+                        width='100%'
+                        height='100%'
+                        in='turbulence'
+                        edgeMode='duplicate'
+                        result='blur'
+                      />
+                      <feBlend mode='color-dodge' x='0%' y='0%' width='100%' height='100%' in='SourceGraphic' in2='blur' result='blend' />
+                    </filter>
+                  </defs>
+                  <rect width='700' height='700' fill='url(#ffflux-gradient)' filter='url(#ffflux-filter)' />
+                </svg>
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
                 <span className='truncate font-semibold'>{address}</span>
@@ -70,8 +103,55 @@ export function NavUser({
             <DropdownMenuLabel className='p-0 font-normal'>
               <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                 <Avatar className='h-8 w-8 rounded-lg'>
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
+                  <svg
+                    className='w-8 h-8'
+                    xmlns='http://www.w3.org/2000/svg'
+                    version='1.1'
+                    viewBox='0 0 700 700'
+                    width='700'
+                    height='700'
+                    opacity='1'>
+                    <defs>
+                      <linearGradient gradientTransform='rotate(150, 0.5, 0.5)' x1='50%' y1='0%' x2='50%' y2='100%' id='ffflux-gradient'>
+                        <stop stopColor='#000' stopOpacity='1' offset='0%' />
+                        <stop stopColor='#000' stopOpacity='1' offset='100%' />
+                      </linearGradient>
+                      <filter
+                        id='ffflux-filter'
+                        x='-20%'
+                        y='-20%'
+                        width='140%'
+                        height='140%'
+                        filterUnits='objectBoundingBox'
+                        primitiveUnits='userSpaceOnUse'
+                        colorInterpolationFilters='sRGB'>
+                        <feTurbulence
+                          type='fractalNoise'
+                          baseFrequency='0.001 0.003'
+                          numOctaves='2'
+                          seed='221'
+                          stitchTiles='stitch'
+                          x='0%'
+                          y='0%'
+                          width='100%'
+                          height='100%'
+                          result='turbulence'
+                        />
+                        <feGaussianBlur
+                          stdDeviation='0 100'
+                          x='0%'
+                          y='0%'
+                          width='100%'
+                          height='100%'
+                          in='turbulence'
+                          edgeMode='duplicate'
+                          result='blur'
+                        />
+                        <feBlend mode='color-dodge' x='0%' y='0%' width='100%' height='100%' in='SourceGraphic' in2='blur' result='blend' />
+                      </filter>
+                    </defs>
+                    <rect width='700' height='700' fill='url(#ffflux-gradient)' filter='url(#ffflux-filter)' />
+                  </svg>
                 </Avatar>
                 <div className='grid flex-1 text-left text-sm leading-tight'>
                   <span className='truncate font-semibold'>{address}</span>

@@ -27,7 +27,7 @@ export function NavMain({
       url: string
     }[]
   }[]
-}) {
+}): JSX.Element {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>

@@ -5,7 +5,7 @@ import { Separator } from '@repo/ui/components/separator'
 import { SidebarTrigger } from '@repo/ui/components/sidebar'
 import { usePathname } from 'next/navigation'
 
-export function PageBreadcrumb() {
+export function PageBreadcrumb(): JSX.Element {
   const path = usePathname()
 
   const breadcrumb = path
@@ -17,7 +17,7 @@ export function PageBreadcrumb() {
         href: `/${item}`,
       }
     })
-    .slice(1)
+    .slice(2)
 
   const [first, ...rest] = breadcrumb
 

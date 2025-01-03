@@ -5,15 +5,17 @@ import { type LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
-export function NavSystems({
-  systems,
+export function NavCommon({
+  title,
+  data,
 }: {
-  systems: {
+  title: string
+  data: {
     name: string
     url: string
     icon: LucideIcon
   }[]
-}) {
+}): JSX.Element {
   const params = useParams()
   const slug = params.slug as string
 
@@ -21,12 +23,12 @@ export function NavSystems({
 
   return (
     <SidebarGroup className='group-data-[collapsible=icon]:hidden'>
-      <SidebarGroupLabel>Systems</SidebarGroupLabel>
+      <SidebarGroupLabel>{title}</SidebarGroupLabel>
       <SidebarMenu>
-        {systems.map((item) => (
+        {data.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
-              <Link href={`/${slug}/${item.url}`}>
+              <Link href={`/game/${slug}${item.url}`}>
                 <item.icon />
                 <span>{item.name}</span>
               </Link>

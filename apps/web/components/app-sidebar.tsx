@@ -2,80 +2,67 @@
 
 import { thirdwebClient } from '@/lib/thirdweb-client'
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@repo/ui/components/sidebar'
-import { AudioWaveform, BookOpen, Bot, FileClock, Frame, GalleryVerticalEnd, History, Puzzle, Radio, Settings2, SquareTerminal } from 'lucide-react'
+import {
+  Anvil,
+  AudioWaveform,
+  BarChart,
+  Bot,
+  Box,
+  Code,
+  Coins,
+  DicesIcon,
+  Frame,
+  GalleryVerticalEnd,
+  History,
+  LayoutDashboard,
+  Medal,
+  PackageOpen,
+  Puzzle,
+  Radio,
+  ScrollText,
+  Settings2,
+  Sword,
+  Trophy,
+  User,
+} from 'lucide-react'
 import * as React from 'react'
 import { defineChain } from 'thirdweb'
 import { ConnectButton } from 'thirdweb/react'
-import { NavDesign } from './nav-design'
-import { NavSystems } from './nav-systems'
+import { NavCommon } from './nav-common'
+import { NavMain } from './nav-main'
 import { NavUser } from './nav-user'
 import { ProjectSwitcher } from './project-switcher'
 
 const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
   navMain: [
     {
-      title: 'Playground',
+      title: 'Dashboard',
       url: '#',
-      icon: SquareTerminal,
+      icon: LayoutDashboard,
       isActive: true,
       items: [
         {
-          title: 'History',
+          title: 'Overview',
           url: '#',
         },
         {
-          title: 'Starred',
-          url: '#',
-        },
-        {
-          title: 'Settings',
+          title: 'Analytics',
           url: '#',
         },
       ],
     },
     {
-      title: 'Models',
+      title: 'Development',
       url: '#',
-      icon: Bot,
+      icon: Code,
+      isActive: true,
       items: [
         {
-          title: 'Genesis',
+          title: 'API Keys',
           url: '#',
         },
         {
-          title: 'Explorer',
-          url: '#',
-        },
-        {
-          title: 'Quantum',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Documentation',
-      url: '#',
-      icon: BookOpen,
-      items: [
-        {
-          title: 'Introduction',
-          url: '#',
-        },
-        {
-          title: 'Get Started',
-          url: '#',
-        },
-        {
-          title: 'Tutorials',
-          url: '#',
-        },
-        {
-          title: 'Changelog',
+          title: 'Usage',
           url: '#',
         },
       ],
@@ -86,10 +73,6 @@ const data = {
       icon: Settings2,
       items: [
         {
-          title: 'General',
-          url: '#',
-        },
-        {
           title: 'Team',
           url: '#',
         },
@@ -97,14 +80,9 @@ const data = {
           title: 'Billing',
           url: '#',
         },
-        {
-          title: 'Limits',
-          url: '#',
-        },
       ],
     },
   ],
-
   designs: [
     {
       name: 'Live',
@@ -130,18 +108,77 @@ const data = {
   ],
   systems: [
     {
-      name: 'Logs',
-      url: '/system/logs',
-      icon: FileClock,
+      name: 'Currency',
+      url: '/system/currency',
+      icon: Coins,
+    },
+    {
+      name: 'Items',
+      url: '/system/items',
+      icon: Sword,
+    },
+    {
+      name: 'Quest',
+      url: '/system/quest',
+      icon: ScrollText,
+    },
+    {
+      name: 'Inventory',
+      url: '/system/inventory',
+      icon: Box,
+    },
+    {
+      name: 'Crafting',
+      url: '/system/crafting',
+      icon: Anvil,
+    },
+    {
+      name: 'Gacha',
+      url: '/system/gacha',
+      icon: DicesIcon,
     },
   ],
-  projects: [
+  entities: [
     {
-      name: 'Classic',
+      name: 'Character',
+      url: '/entity/character',
+      icon: User,
+    },
+    {
+      name: 'NPC',
+      url: '/entity/npc',
+      icon: Bot,
+    },
+    {
+      name: 'Loot Box',
+      url: '/entity/lootbox',
+      icon: PackageOpen,
+    },
+  ],
+  progression: [
+    {
+      name: 'Stats',
+      url: '/system/stats',
+      icon: BarChart,
+    },
+    {
+      name: 'Leaderboard',
+      url: '/progression/leaderboard',
+      icon: Medal,
+    },
+    {
+      name: 'Achievements',
+      url: '/progression/achievements',
+      icon: Trophy,
+    },
+  ],
+  games: [
+    {
+      name: 'Project: Bloom',
       logo: GalleryVerticalEnd,
     },
     {
-      name: 'Mavis X',
+      name: 'Albion',
       logo: AudioWaveform,
     },
   ],
@@ -151,15 +188,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <ProjectSwitcher projects={data.projects} />
+        <ProjectSwitcher games={data.games} />
       </SidebarHeader>
       <SidebarContent>
-        <NavDesign designs={data.designs} />
-        <NavSystems systems={data.systems} />
+        <NavMain items={data.navMain} />
+        <NavCommon title='Entities' data={data.entities} />
+        <NavCommon title='Systems' data={data.systems} />
+        <NavCommon title='Progression' data={data.progression} />
       </SidebarContent>
       <SidebarFooter>
-        <ConnectButton chains={[defineChain(28122024)]} client={thirdwebClient} />
-        <NavUser user={data.user} />
+        <div className='hidden'>
+          <ConnectButton chains={[defineChain(28122024)]} client={thirdwebClient} />
+        </div>
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   )

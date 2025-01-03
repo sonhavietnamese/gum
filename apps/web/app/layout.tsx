@@ -21,6 +21,9 @@ export const metadata: Metadata = {
     template: '%s | GUM',
     default: 'GUM',
   },
+  icons: {
+    icon: '/gum-logo.svg',
+  },
 }
 
 type RootLayoutProps = Readonly<{
