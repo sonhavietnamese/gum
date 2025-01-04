@@ -3,11 +3,15 @@
 import { ADDRESSES } from '@/constants'
 import { thirdwebClient } from '@/lib/thirdweb-client'
 import { generateAvatar } from '@/lib/utils'
+import { Button } from '@repo/ui/components/button'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@repo/ui/components/dialog'
+import { Input } from '@repo/ui/components/input'
+import { Label } from '@repo/ui/components/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/components/tabs'
-import { Container, Copy, Plus, UserRound } from 'lucide-react'
-import { useEffect } from 'react'
+import { Container, Copy, LoaderCircle, Plus, UserRound } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { defineChain, getContract, prepareContractCall } from 'thirdweb'
-import { useActiveAccount, useReadContract, useSendTransaction } from 'thirdweb/react'
+import { TokenName, TokenProvider, TokenSymbol, useActiveAccount, useReadContract, useSendTransaction } from 'thirdweb/react'
 
 const contract = getContract({
   client: thirdwebClient,
@@ -16,30 +20,6 @@ const contract = getContract({
 })
 
 const MOCK_CURRENCIES = [
-  {
-    name: 'Mystic Gems',
-    symbol: 'GEM',
-    address: '0xE66AED87d18BC1aE19c7b53C1fd3305b07F7Dca4',
-    holders: 3845,
-    supply: 1000000,
-    status: 'production',
-  },
-  {
-    name: 'Fable Fragments',
-    symbol: 'FABLE',
-    address: '0x16886bE62C219e8dB0b49B186828b9BF65baa9fC',
-    holders: 3742,
-    supply: 1000000,
-    status: 'production',
-  },
-  {
-    name: 'Dream Dust',
-    symbol: 'DUST',
-    address: '0xca455914dDC36a2c9354462FaCd3597387132600',
-    holders: 3740,
-    supply: 1000000,
-    status: 'development',
-  },
   {
     name: 'Star Shards',
     symbol: 'SSD',
@@ -60,7 +40,7 @@ const MOCK_CURRENCIES = [
 
 export default function Page(): JSX.Element {
   const account = useActiveAccount()
-  const { refetch } = useReadContract({
+  const { refetch: fetchUserCurrencies } = useReadContract({
     contract,
     method: 'function getUserCurrencies(address user) external view returns (address[] memory)',
     params: [account?.address || ''],
@@ -72,15 +52,35 @@ export default function Page(): JSX.Element {
     params: ['test-game'],
   })
 
+  const [currencyName, setCurrencyName] = useState('')
+  const [currencySymbol, setCurrencySymbol] = useState('$')
+  const [isCreatingCurrency, setIsCreatingCurrency] = useState(false)
+  const [openDialog, setOpenDialog] = useState(false)
+
+  const [currencies, setCurrencies] = useState<string[]>([])
+
+  const onCurrencyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrencyName(e.target.value)
+
+    const recommendedSymbol = e.target.value.split(' ')[0]
+    setCurrencySymbol(`$${recommendedSymbol?.toUpperCase() || ''}`)
+  }
+
+  const onCurrencySymbolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrencySymbol(`$${e.target.value.toUpperCase() || ''}`)
+  }
+
   const { mutate: sendTx, data: transactionResult } = useSendTransaction()
 
   const testCreateCurrency = async () => {
     if (!account) return
+    if (!currencyName || !currencySymbol) return
 
+    setIsCreatingCurrency(true)
     const transaction = prepareContractCall({
       contract,
       method: 'function createCurrency(string name, string symbol, address defaultAdmin, address pauser, address minter, string gameSlug)',
-      params: ['Test', 'TEST', account.address, account.address, account.address, 'test-game'],
+      params: [currencyName, currencySymbol.slice(1), account.address, account.address, account.address, 'test-game'],
     })
     sendTx(transaction)
   }
@@ -95,32 +95,81 @@ export default function Page(): JSX.Element {
   useEffect(() => {
     const handle = async () => {
       if (transactionResult) {
-        console.log(transactionResult)
-        const res = await refetch()
-
-        console.log(res.data)
+        setIsCreatingCurrency(false)
+        setOpenDialog(false)
+        const res = await fetchUserCurrencies()
+        setCurrencies((res.data as string[]) || [])
       }
     }
     handle()
   }, [transactionResult])
 
+  useEffect(() => {
+    const handle = async () => {
+      const res = await fetchUserCurrencies()
+      setCurrencies((res.data as string[]) || [])
+    }
+    handle()
+  }, [])
+
   return (
     <div className='flex flex-1 flex-col gap-4 p-4'>
       <div className='grid auto-rows-min gap-4 grid-cols-2 md:grid-cols-3'>
-        <button className='text-left rounded-xl p-4 border bg-muted/5 hover:bg-muted/20 transition-colors'>
-          <div className='flex gap-3 items-center'>
-            <div className='flex items-center rounded-lg overflow-hidden size-12 justify-center bg-muted-foreground/50'>
-              <Plus className='size-5' />
+        <Dialog open={openDialog}>
+          <DialogTrigger asChild>
+            <button onClick={() => setOpenDialog(true)} className='text-left rounded-xl p-4 border bg-muted/5 hover:bg-muted/20 transition-colors'>
+              <div className='flex gap-3 items-center'>
+                <div className='flex items-center rounded-lg overflow-hidden size-12 justify-center bg-muted-foreground/50'>
+                  <Plus className='size-5' />
+                </div>
+
+                <div className='flex flex-col gap-0.5 mt-1 leading-none'>
+                  <span className='text-sm font-bold'>New Currency</span>
+                  <span className='text-sm text-muted-foreground'>
+                    Create a <strong>soft</strong> or <strong>hard</strong> currency used in the game
+                  </span>
+                </div>
+              </div>
+            </button>
+          </DialogTrigger>
+          <DialogContent className='sm:max-w-md'>
+            <DialogHeader>
+              <DialogTitle>Create Currency</DialogTitle>
+              <DialogDescription>Define the currency metadata.</DialogDescription>
+            </DialogHeader>
+            <div className='flex items-center  w-full gap-4'>
+              <div className='grid flex-1 gap-2 w-full'>
+                <Label htmlFor='name' className='text-xs'>
+                  Name
+                </Label>
+                <Input id='name' placeholder='ex: Mystic Gems' value={currencyName} onChange={onCurrencyNameChange} />
+              </div>
+              <div className='grid flex-1 gap-2 w-full'>
+                <Label htmlFor='symbol' className='text-xs'>
+                  Symbol
+                </Label>
+                <Input id='symbol' placeholder='ex: GEM' value={currencySymbol} onChange={onCurrencySymbolChange} />
+              </div>
             </div>
 
-            <div className='flex flex-col gap-0.5 mt-1 leading-none'>
-              <span className='text-sm font-bold'>New Currency</span>
-              <span className='text-sm text-muted-foreground'>
-                Create a <strong>soft</strong> or <strong>hard</strong> currency used in the game
-              </span>
-            </div>
-          </div>
-        </button>
+            <DialogFooter className='flex'>
+              <Button type='button' variant='secondary' onClick={() => setOpenDialog(false)} disabled={isCreatingCurrency}>
+                Later
+              </Button>
+
+              <Button type='button' variant='default' onClick={testCreateCurrency} disabled={isCreatingCurrency}>
+                {isCreatingCurrency ? (
+                  <>
+                    <LoaderCircle className='size-4 animate-spin' />
+                    Creating
+                  </>
+                ) : (
+                  <>Create</>
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Tabs defaultValue='recent' className='mt-5'>
@@ -131,6 +180,49 @@ export default function Page(): JSX.Element {
           </TabsTrigger>
         </TabsList>
         <TabsContent value='recent' className='grid auto-rows-min gap-4 grid-cols-2 md:grid-cols-3 mt-4'>
+          {currencies.map((currency) => (
+            <div
+              key={currency}
+              className='rounded-xl p-4 flex relative justify-between flex-col bg-muted/40 hover:bg-muted/50 transition-colors overflow-hidden'>
+              <TokenProvider client={thirdwebClient} chain={defineChain(28122024)} address={currency}>
+                <div className='flex gap-3 items-center outline-dashed outline-muted/90 rounded-lg p-3 relative'>
+                  <div className='flex items-center rounded-lg overflow-hidden size-12 justify-center'>
+                    <figure className='size-full bg-muted/50'>{generateAvatar(currency)}</figure>
+                  </div>
+
+                  <div className='flex flex-col gap-1 mt-1 leading-none'>
+                    <span className='text-sm text-muted-foreground leading-none'>
+                      <TokenName loadingComponent={<LoaderCircle className='size-4 animate-spin' />} />
+                    </span>
+                    <span className='text-base font-bold'>
+                      $<TokenSymbol loadingComponent={<LoaderCircle className='size-4 animate-spin' />} />
+                    </span>
+                  </div>
+
+                  <button className='absolute right-3 top-3 p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors'>
+                    <Copy className='size-3' />
+                  </button>
+                </div>
+
+                <div className='flex gap-2 select-none justify-between mt-5'>
+                  <CurrencyStatus status='development' />
+
+                  <div className='flex gap-2'>
+                    <div className='flex items-center text-muted-foreground gap-1 bg-muted/50 rounded-lg px-3 py-2 hover:bg-muted/90 transition-colors'>
+                      <UserRound className='size-4' />
+                      <span className='text-sm text-muted-foreground'>{Number(0).toLocaleString()}</span>
+                    </div>
+
+                    <div className='flex items-center text-muted-foreground gap-1 bg-muted/50 rounded-lg px-3 py-2 hover:bg-muted/90 transition-colors'>
+                      <Container className='size-4' />
+                      <span className='text-sm text-muted-foreground'>{Number(0).toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+              </TokenProvider>
+            </div>
+          ))}
+
           {MOCK_CURRENCIES.map((currency) => (
             <div className='rounded-xl p-4 flex relative justify-between flex-col bg-muted/40 hover:bg-muted/50 transition-colors overflow-hidden'>
               <div className='flex gap-3 items-center outline-dashed outline-muted/90 rounded-lg p-3 relative'>
@@ -149,9 +241,7 @@ export default function Page(): JSX.Element {
               </div>
 
               <div className='flex gap-2 select-none justify-between mt-5'>
-                <div className='flex items-center text-muted-foreground gap-1 bg-[#C4701C]/40 rounded-lg px-3 py-2'>
-                  <span className='truncate text-xs text-[#E7AE3B] rounded-full w-fit capitalize'>{currency.status}</span>
-                </div>
+                <CurrencyStatus status={currency.status} />
 
                 <div className='flex gap-2'>
                   <div className='flex items-center text-muted-foreground gap-1 bg-muted/50 rounded-lg px-3 py-2 hover:bg-muted/90 transition-colors'>
@@ -170,8 +260,31 @@ export default function Page(): JSX.Element {
             </div>
           ))}
         </TabsContent>
-        <TabsContent value='live'>Change your password here.</TabsContent>
+        <TabsContent value='live'></TabsContent>
       </Tabs>
     </div>
   )
+}
+
+function CurrencyStatus({ status }: { status: string }) {
+  switch (status) {
+    case 'development':
+      return (
+        <div className='flex items-center text-muted-foreground gap-1 text-[#7bb4f5] bg-[#016FEE]/40  rounded-lg px-3 py-2'>
+          <span className='truncate text-xs rounded-full w-fit capitalize'>Development</span>
+        </div>
+      )
+    case 'production':
+      return (
+        <div className='flex items-center text-muted-foreground gap-1 bg-[#D8FF76] rounded-lg px-3 py-2'>
+          <span className='truncate text-xs text-[#000] rounded-full w-fit capitalize'>Production</span>
+        </div>
+      )
+    default:
+      return (
+        <div className='flex items-center text-muted-foreground gap-1 bg-[#C4701C]/40 rounded-lg px-3 py-2'>
+          <span className='truncate text-xs text-[#E7AE3B] rounded-full w-fit capitalize'>{status}</span>
+        </div>
+      )
+  }
 }

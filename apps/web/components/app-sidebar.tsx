@@ -11,14 +11,10 @@ import {
   Code,
   Coins,
   DicesIcon,
-  Frame,
   GalleryVerticalEnd,
-  History,
   LayoutDashboard,
   Medal,
   PackageOpen,
-  Puzzle,
-  Radio,
   ScrollText,
   Sword,
   Trophy,
@@ -66,29 +62,7 @@ const data = {
       ],
     },
   ],
-  designs: [
-    {
-      name: 'Live',
-      url: '/design/live',
-      icon: Radio,
-    },
-    {
-      name: 'Requests',
-      url: '/design/requests',
-      icon: Frame,
-      count: 10,
-    },
-    {
-      name: 'Components',
-      url: '/design/components',
-      icon: Puzzle,
-    },
-    {
-      name: 'History',
-      url: '/design/history',
-      icon: History,
-    },
-  ],
+
   systems: [
     {
       name: 'Currency',
@@ -124,34 +98,34 @@ const data = {
   entities: [
     {
       name: 'Character',
-      url: '/entity/character',
+      url: '#',
       icon: User,
     },
     {
       name: 'NPC',
-      url: '/entity/npc',
+      url: '#',
       icon: Bot,
     },
     {
       name: 'Loot Box',
-      url: '/entity/lootbox',
+      url: '#',
       icon: PackageOpen,
     },
   ],
   progression: [
     {
       name: 'Stats',
-      url: '/system/stats',
+      url: '#',
       icon: BarChart,
     },
     {
       name: 'Leaderboard',
-      url: '/progression/leaderboard',
+      url: '#',
       icon: Medal,
     },
     {
       name: 'Achievements',
-      url: '/progression/achievements',
+      url: '#',
       icon: Trophy,
     },
   ],
