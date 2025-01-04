@@ -110,7 +110,7 @@ export default function Page(): JSX.Element {
       setCurrencies((res.data as string[]) || [])
     }
     handle()
-  }, [])
+  }, [account])
 
   return (
     <div className='flex flex-1 flex-col gap-4 p-4'>
