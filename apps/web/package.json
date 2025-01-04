@@ -19,6 +19,7 @@
     "next-themes": "^0.4.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "slug": "^10.0.0",
     "thirdweb": "^5.80.0",
     "viem": "^2.22.2"
   },
@@ -28,6 +29,7 @@
     "@types/node": "^20",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
+    "@types/slug": "^5.0.9",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",

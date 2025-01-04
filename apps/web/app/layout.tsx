@@ -34,7 +34,7 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}>
-        <ThemeProvider attribute='class' defaultTheme='dark' enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute='class' defaultTheme='dark' disableTransitionOnChange>
           <ThirdwebProvider>{children}</ThirdwebProvider>
         </ThemeProvider>
       </body>

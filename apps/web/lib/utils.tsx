@@ -1,4 +1,5 @@
 import { cn } from '@repo/ui/lib/utils'
+import slug from 'slug'
 
 export const generateGradient = (seed: string) => {
   let hash = 0
@@ -53,4 +54,18 @@ export const generateAvatar = (seed: string, className?: string): React.ReactNod
       <rect width='700' height='700' fill={`url(#${color1}-gradient)`} filter={`url(#${color1}-filter)`} />
     </svg>
   )
+}
+
+export const generateRandomId = (length: number): string => {
+  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789'
+  let result = ''
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length)
+    result += characters[randomIndex]
+  }
+  return result
+}
+
+export const generateGameSlug = (title: string) => {
+  return slug(title, { lower: true }).concat('-', generateRandomId(8))
 }

@@ -1,39 +1,76 @@
 'use client'
 
+import { ABI } from '@/abis/game-central'
 import { LoginButton } from '@/components/login-button'
 import { LogOutButton } from '@/components/logout-button'
+import { ADDRESSES } from '@/constants'
 import { thirdwebClient } from '@/lib/thirdweb-client'
+import { generateGameSlug } from '@/lib/utils'
 import { Button } from '@repo/ui/components/button'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { defineChain } from 'thirdweb'
-import { ConnectButton, useActiveWallet, useChainMetadata } from 'thirdweb/react'
+import { defineChain, getContract, prepareContractCall, PreparedTransaction, PrepareTransactionOptions } from 'thirdweb'
+import { ConnectButton, useActiveAccount, useReadContract, useSendTransaction } from 'thirdweb/react'
+import { AbiFunction } from 'thirdweb/utils'
+
+const gameCentralContract = getContract({
+  client: thirdwebClient,
+  address: ADDRESSES.GAME_CENTRAL,
+  chain: defineChain(28122024),
+  abi: ABI,
+})
 
 export default function Page(): JSX.Element {
-  const { data: chainMetadata } = useChainMetadata(defineChain(28122024))
-
   const router = useRouter()
-  const wallet = useActiveWallet()
+  const wallet = useActiveAccount()
 
-  console.log(wallet)
+  const { refetch } = useReadContract({
+    contract: gameCentralContract,
+    method: 'getGameByCreator',
+    params: [wallet?.address || ''],
+  })
+  const { mutate: sendTx, data: transactionResult } = useSendTransaction()
 
   useEffect(() => {
     const getAddress = async () => {
-      const add = await wallet?.getAccount()
+      const add = wallet?.address
 
       if (add) {
-        router.push(`/game/${add}/system/currency`)
+        const res = await refetch()
+
+        if (res.status === 'success') {
+          if (res.data.length > 0) {
+            router.push(`/game/${res.data[0]?.slug}/system/currency`)
+          } else {
+            console.log('Creating game')
+            const slug = generateGameSlug('My GUM Game')
+            console.log(slug)
+
+            const transaction = prepareContractCall({
+              contract: gameCentralContract,
+              method: 'createGame',
+              params: [slug, 'My GUM Game', [wallet?.address]],
+            })
+
+            sendTx(transaction as PreparedTransaction<[], AbiFunction, PrepareTransactionOptions>)
+          }
+        }
       }
     }
 
     getAddress()
-  }, [wallet])
+  }, [wallet, transactionResult])
+
+  const fetchGames = async () => {
+    const res = await refetch()
+    console.log(res)
+  }
 
   return (
     <div className='w-screen h-screen bg-background text-primary-foreground'>
-      {/* <div className='w-[200px] h-[200px] bg-primary'></div> */}
-
       <Button>Hey</Button>
+
+      <Button onClick={fetchGames}>Fetch Games</Button>
 
       <div className='flex flex-col gap-2 text-white'>
         <ConnectButton

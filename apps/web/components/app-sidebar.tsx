@@ -20,7 +20,6 @@ import {
   Puzzle,
   Radio,
   ScrollText,
-  Settings2,
   Sword,
   Trophy,
   User,
@@ -55,7 +54,6 @@ const data = {
       title: 'Development',
       url: '#',
       icon: Code,
-      isActive: true,
       items: [
         {
           title: 'API Keys',
@@ -63,21 +61,6 @@ const data = {
         },
         {
           title: 'Usage',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Settings2,
-      items: [
-        {
-          title: 'Team',
-          url: '#',
-        },
-        {
-          title: 'Billing',
           url: '#',
         },
       ],
@@ -188,7 +171,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <ProjectSwitcher games={data.games} />
+        <ProjectSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
@@ -197,16 +180,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavCommon title='Progression' data={data.progression} />
       </SidebarContent>
       <SidebarFooter>
-        {/* <div className='hidden'> */}
-        <ConnectButton
-          chains={[defineChain(28122024)]}
-          client={thirdwebClient}
-          accountAbstraction={{
-            chain: defineChain(28122024), // the chain where your smart accounts will be or is deployed
-            sponsorGas: true, // enable or disable sponsored transactions
-          }}
-        />
-        {/* </div> */}
+        <div className='hidden'>
+          <ConnectButton
+            chains={[defineChain(28122024)]}
+            client={thirdwebClient}
+            accountAbstraction={{
+              chain: defineChain(28122024), // the chain where your smart accounts will be or is deployed
+              sponsorGas: true, // enable or disable sponsored transactions
+            }}
+          />
+        </div>
         <NavUser />
       </SidebarFooter>
     </Sidebar>
